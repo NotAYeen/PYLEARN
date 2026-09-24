@@ -87,6 +87,19 @@ export class PyEditor {
         return this.editor ? this.editor.getValue() : this.textarea?.value || '';
     }
 
+    setTheme(dark) {
+        if (this.editor) this.editor.setOption('theme', dark ? 'monokai' : 'eclipse');
+    }
+
+    setLineWrapping(enabled) {
+        if (this.editor) this.editor.setOption('lineWrapping', !!enabled);
+    }
+
+    onchange(cb) {
+        if (this.editor) this.editor.on('change', () => cb(this.getValue()));
+        else if (this.textarea) this.textarea.addEventListener('input', () => cb(this.value));
+    }
+
     updateHints(words) {
         this.currentWords = (words || []).concat(PYTHON_KEYWORDS);
     }

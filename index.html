@@ -7,7 +7,7 @@
     <meta name="description" content="Simulador interactivo retro para aprender y practicar Python en tiempo real con el motor CPython en WebAssembly (Pyodide). Misiones, retos de depuración, auditoría, ensamblaje y logros.">
     <meta name="keywords" content="Python, simulador, aprender Python, Pyodide, WebAssembly, práctica Python interactiva, programación">
     <meta name="author" content="notayeen">
-    <meta name="theme-color" content="#2b5b5c">
+    <meta name="theme-color" content="#1e1e1e">
 
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
@@ -26,11 +26,12 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/eclipse.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
     <link rel="stylesheet" href="css/style.css">
@@ -56,15 +57,20 @@
                     <span class="brand-tag">Py</span>
                     <span>Learn</span>
                 </h1>
+                <span class="progress-badge" id="progress-badge" aria-live="polite">0 / 32</span>
                 <div class="nav-actions-group">
                     <button class="nav-btn" id="btn-theme-toggle" title="Cambiar Tema" aria-label="Cambiar Tema Claro u Oscuro">
-                        <i class="ph ph-sun" aria-hidden="true"></i>
+                        <i class="ph ph-sun" id="theme-icon" aria-hidden="true"></i>
                     </button>
                     <button class="nav-btn" id="btn-mute" title="Activar o desactivar sonido" aria-label="Activar o desactivar sonido">
-                        <i class="ph-fill ph-speaker-high" aria-hidden="true"></i>
+                        <i class="ph-fill ph-speaker-high" id="mute-icon" aria-hidden="true"></i>
                     </button>
-                    <button class="nav-btn" id="btn-settings" aria-label="Abrir ajustes del simulador">Ajustes</button>
-                    <button class="nav-btn" id="btn-contact" aria-label="Información de contacto">Contacto</button>
+                    <button class="nav-btn btn-icon-adaptive" id="btn-settings" aria-label="Abrir ajustes del simulador">
+                        <i class="ph ph-gear" aria-hidden="true"></i><span class="btn-label">Ajustes</span>
+                    </button>
+                    <button class="nav-btn btn-icon-adaptive" id="btn-contact" aria-label="Información de contacto">
+                        <i class="ph ph-at" aria-hidden="true"></i><span class="btn-label">Contacto</span>
+                    </button>
                 </div>
             </div>
 
@@ -74,6 +80,9 @@
                 <button class="nav-btn btn-run" id="btn-run" aria-label="Ejecutar código Python">
                     <span>Ejecutar</span>
                     <i class="ph-fill ph-play" aria-hidden="true"></i>
+                </button>
+                <button class="nav-btn btn-icon-adaptive" id="btn-reset" title="Reiniciar el código de este nivel" aria-label="Reiniciar el código de este nivel">
+                    <i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i><span class="btn-label">Reiniciar</span>
                 </button>
                 <div class="py-engine-status" id="py-status" role="status" aria-live="polite">Motor: preparando…</div>
             </div>
@@ -131,7 +140,7 @@
                             <div id="dnd-source" style="display: flex; flex-direction: column; gap: 8px; min-height: 80px;"></div>
                         </div>
                         <div class="dnd-pane dnd-pane-target">
-                            <div style="font-weight: bold; margin-bottom: 10px; color: var(--accent-run);">Tu Código:</div>
+                            <div style="font-weight: bold; margin-bottom: 10px; color: var(--text-secondary);">Tu Código:</div>
                             <div id="dnd-target" style="display: flex; flex-direction: column; gap: 8px; min-height: 80px;"></div>
                         </div>
                     </div>
@@ -186,8 +195,9 @@
             <div class="retro-modal-body">
                 <p id="retro-modal-msg"></p>
                 <div class="retro-modal-buttons">
-                    <button class="nav-btn" id="retro-modal-ok">Aceptar</button>
                     <button class="nav-btn" id="retro-modal-cancel">Cancelar</button>
+                    <button class="nav-btn" id="retro-modal-ok">Aceptar</button>
+                    <button class="nav-btn" id="retro-modal-next" style="display:none;">Nivel siguiente</button>
                 </div>
             </div>
         </div>

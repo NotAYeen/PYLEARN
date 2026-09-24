@@ -31,16 +31,6 @@ export class AchievementsManager {
             });
             document.body.appendChild(container);
         }
-
-        if (!document.getElementById('toast-style')) {
-            const style = document.createElement('style');
-            style.id = 'toast-style';
-            style.textContent = `
-                @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-                @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
-            `;
-            document.head.appendChild(style);
-        }
     }
 
     unlock(id) {
@@ -56,22 +46,9 @@ export class AchievementsManager {
     showToast(achievement) {
         const toast = document.createElement('div');
         toast.className = 'retro-toast';
-        Object.assign(toast.style, {
-            background: 'gold',
-            border: '2px solid #b8860b',
-            boxShadow: '4px 4px 0px rgba(0,0,0,0.5)',
-            padding: '10px',
-            color: 'black',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            animation: 'slideIn 0.5s ease-out',
-            fontFamily: 'var(--font-ui)',
-            minWidth: '200px'
-        });
 
         toast.innerHTML = `
-            <i class="ph-fill ph-trophy" style="font-size: 24px; color: #8b6508;"></i>
+            <i class="ph-fill ph-trophy" aria-hidden="true" style="font-size: 24px;"></i>
             <div>
                 <div style="font-weight: bold; font-size: 14px;">Logro Desbloqueado</div>
                 <div style="font-size: 12px; font-weight: bold;">${achievement.title}</div>

@@ -15,7 +15,15 @@ export class PyRunner {
             try {
                 this.worker = new Worker('python-worker.js');
                 this.worker.onmessage = (e) => this.onWorkerMessage(e);
-                this.worker.onerror = () => this.warmupInline();
+                this.worker.onerror = () => {
+                    if (this.pending) {
+                        const p = this.pending;
+                        this.pending = null;
+                        p.resolve({ ok: false, stdout: '', stderr: 'Error del motor Python (worker). Reintentando en modo compatibilidad…' });
+                    }
+                    this.worker = null;
+                    this.warmupInline();
+                };
                 this.worker.postMessage({ type: 'init' });
                 this.onStatus('Motor: cargando CPython (WebAssembly)…');
                 return;
