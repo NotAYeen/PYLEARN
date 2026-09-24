@@ -1,0 +1,31 @@
+{
+  "name": "pylearn",
+  "version": "1.0.0",
+  "description": "Simulador interactivo para aprender y practicar Python en el navegador (Pyodide + WebAssembly).",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "validate": "node scripts/validate-levels.mjs",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "python",
+    "simulador",
+    "pyodide",
+    "wasm",
+    "educativo"
+  ],
+  "author": "notayeen",
+  "license": "ISC",
+  "dependencies": {
+    "sortablejs": "^1.15.7",
+    "vite": "^8.1.5"
+  },
+  "devDependencies": {
+    "pyodide": "^314.0.7",
+    "terser": "^5.49.0",
+    "vitest": "^5.0.1"
+  }
+}

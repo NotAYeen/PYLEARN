@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Validate levels
+        run: npm run validate
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build bundle
+        run: npm run build
+
+      - name: Guard bundle.js actualizado
+        run: |
+          git diff --exit-code bundle.js || {
+            echo "::error::bundle.js desactualizado. Ejecuta 'npm run build' y commitea el archivo."
+            exit 1
+          }

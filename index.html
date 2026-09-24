@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyLearn | Aprende y Practica Python Interactivo</title>
+    <meta name="description" content="Simulador interactivo retro para aprender y practicar Python en tiempo real con el motor CPython en WebAssembly (Pyodide). Misiones, retos de depuración, auditoría, ensamblaje y logros.">
+    <meta name="keywords" content="Python, simulador, aprender Python, Pyodide, WebAssembly, práctica Python interactiva, programación">
+    <meta name="author" content="notayeen">
+    <meta name="theme-color" content="#2b5b5c">
+
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <link rel="canonical" href="https://notayeen.github.io/PYLEARN/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://notayeen.github.io/PYLEARN/">
+    <meta property="og:title" content="PyLearn | Aprende y Practica Python Interactivamente">
+    <meta property="og:description" content="Aprende y practica Python en tiempo real directamente en tu navegador con CPython y WebAssembly.">
+    <meta property="og:image" content="https://notayeen.github.io/PYLEARN/preview.png">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PyLearn">
+    <meta name="twitter:description" content="Aprende y practica Python en tiempo real directamente en tu navegador.">
+    <meta name="twitter:image" content="https://notayeen.github.io/PYLEARN/preview.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet"></noscript>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css">
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    <link rel="stylesheet" href="css/style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalApplication",
+      "name": "PyLearn",
+      "operatingSystem": "Any",
+      "applicationCategory": "EducationalApplication",
+      "educationalUse": "Python Programming Practice and Learning",
+      "url": "https://notayeen.github.io/PYLEARN/",
+      "description": "Simulador interactivo y retro para aprender y practicar Python directamente desde el navegador con el motor CPython en WebAssembly."
+    }
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <nav class="top-nav" role="navigation" aria-label="Navegación principal">
+            <div class="nav-header-row">
+                <h1 class="main-heading">
+                    <span class="brand-tag">Py</span>
+                    <span>Learn</span>
+                </h1>
+                <div class="nav-actions-group">
+                    <button class="nav-btn" id="btn-theme-toggle" title="Cambiar Tema" aria-label="Cambiar Tema Claro u Oscuro">
+                        <i class="ph ph-sun" aria-hidden="true"></i>
+                    </button>
+                    <button class="nav-btn" id="btn-mute" title="Activar o desactivar sonido" aria-label="Activar o desactivar sonido">
+                        <i class="ph-fill ph-speaker-high" aria-hidden="true"></i>
+                    </button>
+                    <button class="nav-btn" id="btn-settings" aria-label="Abrir ajustes del simulador">Ajustes</button>
+                    <button class="nav-btn" id="btn-contact" aria-label="Información de contacto">Contacto</button>
+                </div>
+            </div>
+
+            <div class="nav-controls-row">
+                <select class="nav-btn db-select-input" id="db-selector" aria-label="Seleccionar nivel">
+                </select>
+                <button class="nav-btn btn-run" id="btn-run" aria-label="Ejecutar código Python">
+                    <span>Ejecutar</span>
+                    <i class="ph-fill ph-play" aria-hidden="true"></i>
+                </button>
+                <div class="py-engine-status" id="py-status" role="status" aria-live="polite">Motor: preparando…</div>
+            </div>
+        </nav>
+
+        <div class="mobile-tab-bar" id="mobile-tab-bar" role="tablist" aria-label="Navegación móvil de paneles">
+            <button class="mobile-tab-btn active" id="tab-btn-editor" role="tab" aria-selected="true" aria-controls="layout-mid">
+                <i class="ph-fill ph-code" aria-hidden="true"></i> Editor
+            </button>
+            <button class="mobile-tab-btn" id="tab-btn-schema" role="tab" aria-selected="false" aria-controls="layout-left">
+                <i class="ph-fill ph-lightbulb" aria-hidden="true"></i> Conceptos
+            </button>
+            <button class="mobile-tab-btn" id="tab-btn-mission" role="tab" aria-selected="false" aria-controls="layout-right">
+                <i class="ph-fill ph-target" aria-hidden="true"></i> Misión
+            </button>
+        </div>
+
+        <div class="app-layout">
+            <aside class="layout-left mobile-hide-panel" id="layout-left" role="complementary" aria-label="Panel de conceptos y documentación">
+                <div class="sidebar-section">
+                    <h2 class="section-title text-center">Conceptos del Nivel</h2>
+                    <div class="section-subtitle text-center">Lo que pones en práctica</div>
+                    <ul class="schema-list" id="conceptos-list"></ul>
+                </div>
+                <div class="sidebar-section">
+                    <div class="section-title text-center section-title-toggle">
+                        <span>Pistas del Nivel</span>
+                        <button class="nav-btn-mini" id="toggle-hints-btn" aria-label="Mostrar u Ocultar Pistas del Nivel">Mostrar</button>
+                    </div>
+                    <ul class="schema-list" id="resources-list" style="padding-left:10px; display:none;"></ul>
+                </div>
+                <div class="sidebar-section">
+                    <h2 class="section-title text-center">Enciclopedia Python</h2>
+                    <ul class="schema-list" id="docs-list" style="padding:4px;"></ul>
+                </div>
+            </aside>
+
+            <main class="layout-mid mobile-show-panel" id="layout-mid" role="main" aria-label="Editor de código Python y resultados">
+                <div class="mobile-mission-banner" id="mobile-mission-briefing" aria-label="Misión del Nivel Actual"></div>
+
+                <div class="editor-container" id="editor-container">
+                    <label for="py-editor" class="visually-hidden">Editor de código Python</label>
+                    <textarea id="py-editor" aria-label="Editor de código Python"></textarea>
+                </div>
+
+                <div class="audit-container" id="audit-container" style="display: none;">
+                    <div class="audit-instruction">Haz clic en el fragmento de código que contiene el error:</div>
+                    <div class="audit-code" id="audit-code-area"></div>
+                </div>
+                <div class="dnd-container" id="dnd-container" style="display: none;">
+                    <div class="dnd-instruction">Arrastra los bloques, presiona ＋ o − para ensamblar el código:</div>
+                    <div class="dnd-row">
+                        <div class="dnd-pane">
+                            <div style="font-weight: bold; margin-bottom: 10px; color: var(--text-secondary);">Bloques Disponibles</div>
+                            <div id="dnd-source" style="display: flex; flex-direction: column; gap: 8px; min-height: 80px;"></div>
+                        </div>
+                        <div class="dnd-pane dnd-pane-target">
+                            <div style="font-weight: bold; margin-bottom: 10px; color: var(--accent-run);">Tu Código:</div>
+                            <div id="dnd-target" style="display: flex; flex-direction: column; gap: 8px; min-height: 80px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resizer" id="vertical-resizer" role="separator" aria-orientation="horizontal" aria-label="Ajustar la altura del editor"></div>
+
+                <section class="results-panel" id="results-panel" aria-live="polite" aria-label="Resultados de la ejecución Python">
+                    <div class="placeholder-msg" id="results-placeholder">
+                        <h2>Práctica Python</h2>
+                        <p>La salida de tu programa se mostrará aquí.<br>Haz clic en el botón Ejecutar para probar tu código.</p>
+                    </div>
+                    <div class="results-content-wrapper" id="results-content" style="display:none;">
+                        <pre class="py-output" id="results-output" tabindex="0"></pre>
+                    </div>
+                </section>
+            </main>
+
+            <aside class="layout-right mobile-hide-panel" id="layout-right" role="complementary" aria-label="Detalles de la misión e información del entorno">
+                <div class="mission-text" id="mission-briefing">
+                    Cargando misión...
+                </div>
+
+                <div class="mission-actions">
+                    <button class="nav-btn" id="btn-hint" aria-label="Obtener Pista para el nivel actual">Obtener Pista</button>
+                    <button class="nav-btn" id="btn-solution" aria-label="Ver Solución sugerida del nivel">Ver Solución</button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h2 class="section-title text-center">Entorno de Ejecución</h2>
+                    <div class="table-info-list" id="env-info-content"></div>
+                </div>
+
+                <div class="sidebar-section" id="expected-panel" style="display:none;">
+                    <h2 class="section-title text-center">Salida Esperada</h2>
+                    <pre class="expected-output" id="expected-output"></pre>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.js" defer></script>
+
+    <div id="retro-modal-overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="retro-modal-title">
+        <div class="retro-modal">
+            <div class="retro-modal-header">
+                <span id="retro-modal-title">Atención</span>
+                <button class="retro-modal-close" id="retro-modal-x" aria-label="Cerrar ventana modal"><i class="ph ph-x" aria-hidden="true"></i></button>
+            </div>
+            <div class="retro-modal-body">
+                <p id="retro-modal-msg"></p>
+                <div class="retro-modal-buttons">
+                    <button class="nav-btn" id="retro-modal-ok">Aceptar</button>
+                    <button class="nav-btn" id="retro-modal-cancel">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="docs-window" class="retro-window hidden" role="dialog" aria-labelledby="docs-title">
+        <div class="retro-window-header" id="docs-window-header">
+            <span id="docs-title"><i class="ph-fill ph-book" aria-hidden="true"></i> Ayuda de Python</span>
+            <button class="retro-modal-close" id="docs-close" aria-label="Cerrar ventana de ayuda de Python"><i class="ph ph-x" aria-hidden="true"></i></button>
+        </div>
+        <div class="retro-window-body">
+            <h3 id="docs-item-name" style="margin-bottom: 8px;"></h3>
+            <p id="docs-item-desc" style="font-size: 13px; line-height: 1.4; margin-bottom: 12px;"></p>
+            <div class="docs-example-box">
+                <strong>Ejemplo:</strong><br>
+                <code id="docs-item-example"></code>
+            </div>
+        </div>
+    </div>
+
+    <script src="bundle.js" defer></script>
+</body>
+</html>
