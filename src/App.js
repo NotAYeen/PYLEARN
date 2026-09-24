@@ -74,7 +74,7 @@ export class App {
         if (icon) icon.className = dark ? 'ph ph-moon' : 'ph ph-sun';
 
         const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', dark ? '#1e1e1e' : '#ffffff');
+        if (meta) meta.setAttribute('content', dark ? '#1e1e1e' : '#eef0f3');
 
         if (this.editor) this.editor.setTheme(dark);
     }
@@ -372,6 +372,7 @@ export class App {
         });
         const btn = $('toggle-hints-btn');
         btn.textContent = 'Mostrar';
+        btn.setAttribute('aria-expanded', 'false');
         list.style.display = 'none';
     }
 
@@ -381,6 +382,7 @@ export class App {
         const hidden = list.style.display === 'none';
         list.style.display = hidden ? 'block' : 'none';
         btn.textContent = hidden ? 'Ocultar' : 'Mostrar';
+        btn.setAttribute('aria-expanded', String(!hidden));
     }
 
     renderExpected() {
