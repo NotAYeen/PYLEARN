@@ -384,6 +384,7 @@ select optgroup {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .section-title {
